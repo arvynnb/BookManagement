@@ -12,25 +12,18 @@
                         <th>Author</th>
                         <th>Quantity</th>
                         <th></th>
-                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($books as $book)
-                        {{-- @if () --}}
+                        {{-- @if ($book->id != DB::table('borrows')->select('book_id')->where('book_id',$book->id)->first() ) --}}
                             <div class="flex">
                                 <tr>
+                                    {{-- <td>{{$book->borrows}}</td> --}}
+                                    {{-- <td>{{DB::table('borrows')->select('book_id')->where('book_id',$book->id)->get()}}</td> --}}
                                     <td>{{$book->title}}</td>
                                     <td>{{$book->author}}</td>
                                     <td>{{$book->quantity - $book->borrows_count}}</td>
-                                    <td>
-                                        {{-- {!!
-                                            $book->quantity -
-                                            (DB::table('borrows')
-                                            ->where('book_id',$book->id)
-                                            ->count())  
-                                        !!} --}}
-                                    </td>
                                     <td class="text-center">
                                         <a class="fa fa-eye" href="{{'/student/'.$book->id.'/single-view'}}" id="view-{{$book->id}}">
                                         &nbsp;

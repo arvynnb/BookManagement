@@ -48,6 +48,6 @@ Route::get('/student/{book}/single-view', 'StudentController@singleview')->middl
 Route::post('/student', 'StudentController@borrow')->middleware('student_login');
 Route::get('/student/record', 'StudentController@record')->middleware('student_login');
 Route::post('/student/record/book_returned', 'StudentController@book_returned')->middleware('student_login');
-Route::get('/student/{book}/request-details', 'StudentController@request_details')->middleware('student_login');
+Route::get('/student/{book}/request-details/{borrow}', 'StudentController@request_details')->middleware('student_login');
 
 

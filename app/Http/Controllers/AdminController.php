@@ -65,7 +65,7 @@ class AdminController extends Controller
 
     public function update(Request $request,Book $book)
     {
-        // $books = Book::withCount('borrows')->get();
+        $books = Book::withCount('borrows')->where('id',$book->id)->get();
         // dd($books->borrows_count);
         // $input = Input::only('quantity');   
         // $quantity = $input['quantity'];
@@ -98,9 +98,9 @@ class AdminController extends Controller
 
         
         $book->update($validatedData);
-        return redirect()->back()->withSuccess('Book Edited');
+        return redirect()->back()->with('books',$books)->withSuccess('Book Edited');
         // dd($book);
-        return redirect()->back();
+        // return redirect()->back();
     }
 
     public function delete(Book $book){
@@ -134,8 +134,10 @@ class AdminController extends Controller
 
     public function viewrequest_student(Book $book)
     {
-        $books = Book::withCount('borrows')->where('id',$book->id)->get();
+        
         // $student = Student::with('book')->where('student_id',$borrow->student_id)->get();
+        $student = Student::where('student_id',Auth::user()->student_id)->get();
+        $books = Book::withCount('borrows')->where('id',$book->id)->get();
         return view('/admin/view-request-student')->with('books',$books);
     }
 

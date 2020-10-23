@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class StudentController extends Controller
 {
-    public function index(Book $books, Request $request)
+    public function index(Book $book, Request $request)
     {
     //    dd( DB::table('borrows')
     //    ->where('book_id',$books->id)
@@ -21,8 +21,12 @@ class StudentController extends Controller
         // dd($book_count);
         // $books =  Book::all();
         // return view('student.index',compact('books'))->with('book_count',$book_count);
-
-        $books = Book::withCount('borrows')->get();
+        // $borrow_id = Borrow::select('book_id')->get();
+        // dd($borrow_id);
+        $borrows = Borrow::where('student_id',Auth::user()->student_id)->get()->pluck('book_id');
+        // dd($borrows);
+        $books = Book::withCount('borrows')->whereNotIn('id',$borrows)->get();
+        // dd($books);
         return view('student.index')->with('books',$books);
     }
 
@@ -63,7 +67,7 @@ class StudentController extends Controller
                             ->join('students', 'borrows.student_id','=','students.student_id')
                             ->join('books', 'borrows.book_id','=', 'books.id')
                             ->select('students.first_name', 'books.title', 'books.author',
-                                    'borrows.status','borrows.id','borrows.created_at','borrows.returned_at')
+                                    'borrows.status','borrows.id','borrows.created_at','borrows.returned_at','borrows.book_id')
                             ->orWhere('students.student_id',$student_id)
                             ->get();
 
@@ -84,10 +88,10 @@ class StudentController extends Controller
 
     public function request_details(Book $book, Borrow $borrow)
     {
+        // dd($borrow);
         // $query = DB::table('borrows')->select('name');
-        $borrow = Borrow::withCount('book')->first();
         // dd($borrow->book_id);
-        $books = Book::withCount('borrows')->where('id',$borrow->book_id)->get();
+        $books = Book::where('id',$borrow->book_id)->withCount('borrows')->get();
         // dd($books);
         return view('/student/request-details')->with('books',$books);
     }

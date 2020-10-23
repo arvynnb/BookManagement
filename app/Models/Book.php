@@ -10,7 +10,7 @@ class Book extends Model
 
     public function borrows()
     {
-        return $this->hasMany('App\Models\Borrow');
+        return $this->hasMany('App\Models\Borrow','book_id','id');
     }
 
     public function student()

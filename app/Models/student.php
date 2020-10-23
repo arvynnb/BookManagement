@@ -14,7 +14,7 @@ class student extends Model
 
     public function book()
     {
-        return $this->hasMany('App\Models\Student');
+        return $this->hasMany('App\Models\student');
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Auth;
 use App\Models\Book;
+use App\Models\Borrow;
 use App\Models\User;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -14,9 +15,6 @@ class AuthController extends Controller
     public function authlogin(Request $request){
 
         // $user = Auth::user()->role;
-        // dd($user);
-        // dd('test');
-        // dd($request->all());
         // dd($hashed = Hash::make('student'));
         // dd($hashed = Hash::make('admin'));
         // dd($hashed = Hash::make('qwerty'));
@@ -33,12 +31,13 @@ class AuthController extends Controller
             return view('admin.index')->with('books',$books);
 
         }elseif(Auth::attempt(['email' => $email, 'password' => $password, 'role' => 0])){
-
             // $book_count = Student::withCount('borrows')->get();
-
             // $books =  Book::all();
             // return view('student.index',compact('books'))->with('book_count',$book_count);
-            $books = Book::withCount('borrows')->get();
+            // $books = Book::withCount('borrows')->get();
+            
+            $borrows = Borrow::where('student_id',Auth::user()->student_id)->get()->pluck('book_id');
+            $books = Book::withCount('borrows')->whereNotIn('id',$borrows)->get();
             // dd($books);
             return view('student.index')->with('books',$books);
         }else{

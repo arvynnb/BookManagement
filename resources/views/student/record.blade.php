@@ -53,7 +53,7 @@
                                 </td>
                                 <td>
                                     <a class="fa fa-eye" 
-                                        href="{{'/student/'.$record->id.'/request-details'}}" 
+                                        href="{{'/student/'.$record->book_id.'/request-details/'.$record->id}}" 
                                         id="">
                                     </a>
                                 </td>

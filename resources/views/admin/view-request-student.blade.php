@@ -8,9 +8,9 @@
                 <ul>
                     <li>
                         Student Name: 
-                        <span style="font-weight:900" id="student">
+                        <span style="font-weight:900" id="student"> 
                             {{-- {!!
-                            
+                                
                             !!} --}}
                         </span>
                     </li>
