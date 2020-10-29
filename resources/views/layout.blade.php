@@ -17,8 +17,12 @@
                 color: #636b6f;
                 font-family: 'Nunito', sans-serif;
                 font-weight: 200;
-                height: 100vh;
+                height: 100%;
                 margin: 0;
+                background-image:url("/storage/images/bg-image-login.jpg");
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
             }
 
             .full-height {
@@ -63,41 +67,43 @@
                 margin-bottom: 30px;
             }
 
+            .error{
+                color:red;
+            }
+
         </style>
     </head>
     <body>
-        {{-- <div class="flex-center" style="color:blue">
-            <h1 class="font-weight: 900">Book Management</h1>
-        </div>
-        <div class="d-flex" id="wrapper">
-
-            <!-- Sidebar -->
-            <div class="bg-light border-right" id="sidebar-wrapper">
-                <div class="list-group list-group-flush">
-                    <a href="/admin" class="list-group-item list-group-item-action bg-light">Book List</a>
-                    <a href="/admin/createbook" class="list-group-item list-group-item-action bg-light">Add Book</a>
-                    <a href="#" class="list-group-item list-group-item-action bg-light">View Request</a>
-                </div>
-            </div> --}}
-
         <div class="container ">
             @yield('Content')
         </div>
 
-        @if(session('success'))
+        {{-- @if(session('success'))
         <div class="alert alert-success">
                 {{session('success')}}
         </div>
-        @endif
+        @endif --}}
 
         @if(session('error'))
         <div class="alert alert-danger">
                 {{session('error')}}
         </div>
         @endif
+        
+        {{-- <footer class="page-footer font-small blue text-black">
+            <div class="footer-copyright text-center py-3">© 2020 Copyright:
+            <a href="#" style="color:black"> HiveLabs</a>
+            </div>
+        </footer> --}}
+        
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jQuery.Validate/1.6/jQuery.Validate.min.js"></script>
+        @yield('script')
     </body>
 </html>

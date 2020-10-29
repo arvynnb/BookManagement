@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 use Auth;
+use DataTables;
 use Carbon\Carbon;
 use App\Models\Book;
 use App\Models\Borrow;
+use App\Models\File;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +16,11 @@ use Illuminate\Support\Facades\Input;
 
 class AdminController extends Controller
 {
-
+    public function index(Request $request)
+    {   
+            $books = Book::withCount('borrows')->orderBy('title','ASC')->get();
+            return view('admin.index')->with('books',$books);
+    }
 
     public function create(){
         return view('admin.createbook');
@@ -22,243 +28,166 @@ class AdminController extends Controller
 
     public function store(Request $request)
     {
-        
-        // dd($request->all());
         $validatedData = request()->validate([
-            'title' => 'required',
-            'author' => 'required',
-            'description' => 'required',
-            'quantity' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5120'
+            'title'         => 'required|string|max:50',
+            'author'        => 'required|string|max:50',
+            'description'   => 'required|string|max:255',
+            'quantity'      => 'required|numeric|min:0|max:1000',
+            'image'         => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5120'
             ]);
 
-                    $filename = $request->image->getClientOriginalName();        //get the original name of the image
-                    $request->image->storeAs('images',$filename,'public');       //store image
-                    // $this->deleteOldImage();                                     //delete old image
-                    // Storage::delete('/public/images/'.$book->image);
-                    // dd($filename);
-                    Book::create([
-                        'title' => $validatedData['title'],
-                        'author' => $validatedData['author'],
-                        'description' => $validatedData['description'],
-                        'quantity' => $validatedData['quantity'],
-                        'image' => $filename,
-                    ]);
+            $filename = $request->image->getClientOriginalName();        
+            $request->image->storeAs('images',$filename,'public');     
+            
+            $book = Book::create([
+                'title'         => $validatedData['title'],
+                'author'        => $validatedData['author'],
+                'description'   => $validatedData['description'],
+                'quantity'      => $validatedData['quantity'],
+                'image'         => $filename,
+            ]);
+            
+            File::create([
+                'name'      => $filename,
+                'path'      => '/storage/images/',
+                'model'     => 'Book',
+                'source_id' => $book->id
+            ]);
         
         return redirect()->back()->withSuccess('Book Added');
     }
 
-    public function index()
+    public function edit(Book $book, File $files)
     {
-        // $books =  Book::all();
-        // return view('admin.index',compact('books'));        
-        $books = Book::withCount('borrows')->get();
-        return view('admin.index')->with('books',$books);
+        $books = Book::withCount('borrows')->with('file')->where('id',$book->id)->get();
+        return view('/admin/edit')->with('books',$books);
     }
 
-    public function edit(Book $book){
-        // dd($book);
-        // return view('/admin/edit')->with('book',$book);
-        // $books = Book::withCount('borrows')->where('id',$book->id)->get();
-        return view('/admin/edit')->with('book',$book);
-    }
-
-    public function update(Request $request,Book $book)
+    public function update(Request $request,Book $book, File $file)
     {
-        $books = Book::withCount('borrows')->where('id',$book->id)->get();
-        // dd($books->borrows_count);
-        // $input = Input::only('quantity');   
-        // $quantity = $input['quantity'];
+        $books    = Book::withCount('borrows')->where('id',$book->id)->get();
+        $quantity = $request->input('quantity');
+        $books    = Book::withCount('borrows')->where('id',$book->id)->get();
+        $count    = 0;
 
-        // if($quantity <= ($request->quantity))
-        // {
-        //     // dd('true');
-        //     return redirect()->back()->withErrors('Invalid input of quantity');
-        // }
-        // else
-        // {
-            
-        // }
+        foreach ($books as $book_count) 
+        {
+            $count = $book_count->borrows_count;
+        }
 
-
+        if ($count >= $quantity) 
+        {
+           return redirect()->back()->with('books',$books)->withErrors('Book quantity invalid');
+        }
 
         $validatedData = request()->validate([
-            'title' => 'required',
-            'author' => 'required',
-            'description' => 'required',
-            'quantity' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:5120'
+            'title'       => 'required|string|max:50',
+            'author'      => 'required|string|max:50',
+            'description' => 'required|string|max:255',
+            'quantity'    => 'required|numeric|min:0|max:1000',
+            'image'       => 'image|mimes:jpeg,png,jpg,gif,svg|max:5120'
             ]);
 
             if ($request->hasFile('image')) {
-                $filename = $request->image->getClientOriginalName();        //get the original name of the image
-                $request->image->storeAs('images',$filename,'public');       //store image
-                $book->update(['image'=>$filename]);                         //update query                           
-            }
-
-        
-        $book->update($validatedData);
-        return redirect()->back()->with('books',$books)->withSuccess('Book Edited');
-        // dd($book);
-        // return redirect()->back();
-    }
-
-    public function delete(Book $book){
-        $book->delete();
-        return redirect()->back()->withSuccess('Book Deleted');
-    }
-
-    public function viewbook(Book $book)
-    {
-        $books = Book::withCount('borrows')->where('id',$book->id)->get();
-        return view('/admin/view-book')->with('books',$books);
-        // $book = Book::withCount('borrows')->get();
-        // return view('admin.view-book')->with('book',$book);
-    }
-
-    public function viewrequest(Request $request, Borrow $borrows)
-    {
-        // $borrows = Borrow::all();
-        // $books = Book::all();
-        // $students = Student::all();
-
-        $request = DB::table('borrows')
-            ->join('students', 'borrows.student_id','=','students.student_id')
-            ->join('books', 'borrows.book_id','=', 'books.id')
-            ->select('students.first_name','students.last_name', 'books.title', 'borrows.id','borrows.status','book_id','borrows.student_id')
-            ->orderBy('status','DESC')
-            ->get();
-
-        return view('/admin/view-request')->with(['request'=>$request]);  
-    }
-
-    public function viewrequest_student(Book $book)
-    {
-        
-        // $student = Student::with('book')->where('student_id',$borrow->student_id)->get();
-        $student = Student::where('student_id',Auth::user()->student_id)->get();
-        $books = Book::withCount('borrows')->where('id',$book->id)->get();
-        return view('/admin/view-request-student')->with('books',$books);
-    }
-
-
-    public function approve_decline(Request $request,Borrow $borrows){
-        // dd($request->all());
-        // return $request->approve_decline;
-
-
-        if ($request->approve_decline == 0) {
-            DB::table('borrows')
-                ->where('id',$request->record_id)
-                ->update([
-                        'status' => 0,
-                        'declined_at'=>Carbon::now('Asia/Manila')
-                ]);
-            return redirect()->back();
-        }else{
-            DB::table('borrows')
-                ->where('id',$request->record_id)
-                ->update([
-                            'status' => 1,
-                            'accepted_at'=>Carbon::now('Asia/Manila')
-                        ]);
+                $filename = $request->image->getClientOriginalName();
+                $request->image->storeAs('images',$filename,'public'); 
+                $book->update(
+                    [
+                       'image'       => $filename,
+                       'title'       => $validatedData['title'],
+                       'author'      => $validatedData['author'],
+                       'description' => $validatedData['description'],
+                       'quantity'    => $validatedData['quantity']
+                    ]);
+                    $file = DB::table('files')
+                    ->where('source_id', $book->id)
+                    ->update(['name' => $filename]);
                 
-            // DB::table('books')
-            //     // ->where('id',$request->record_id)
-            //     ->decrement('quantity');
+            }else
+            {
+                $book->update($validatedData);
+            }
+        return redirect()->back()->with('books',$books)->withSuccess('Book Edited');
+    }
 
-            return redirect()->back();
-            // return 'accepted';
+    public function delete(Book $book)
+    {
+        $books = Book::withCount('borrows')->where('id',$book->id)->get();
+        $count = 0;
+        foreach ($books as $book_count) {
+            $count = $book_count->borrows_count;
+        }
+
+        if($count == 0)
+        {
+            $book->delete();
+            return redirect()->back()->withSuccess('Book Deleted');
+        }
+        else
+        {
+            return redirect()->back()->withErrors('Cannot delete this book');
         }
 
     }
 
+    public function viewbook(Book $book)
+    {
+        $books = Book::select('title','author','description','quantity','image')
+                       ->withCount('borrows')
+                       ->with('file')
+                       ->where('id',$book->id)->get();
+        return view('/admin/view-book')->with('books',$books);
+    }
 
+    public function viewrequest(Book $book, Borrow $borrow, student $student)
+    {
+        $request_book = Borrow::select('id','status','book_id','student_id')
+                                ->with('book:id,title')
+                                ->with('student:id,name')
+                                ->orderBy('status','DESC')
+                                // ->get();
+                                ->paginate(10);
+        return view('/admin/view-request')->with('request_book',$request_book);  
+    }
 
+    public function viewrequest_student(Book $book, $student)
+    {
+        $student_request = Student::select('name')->where('user_id',$student)->first();
+        $books = Book::select('title','author','description','quantity','image')
+                        ->withCount('borrows')
+                        ->where('id',$book->id)
+                        ->first();
+        return view('/admin/view-request-student')->with(['book' =>$books,'student'=> $student_request]);
+    }
+
+    public function approve_decline(Request $request,Borrow $borrows)
+    {
+        if ($request->approve_decline == 0) 
+        {
+            DB::table('borrows')
+                ->where('id',$request->record_id)
+                ->update([
+                        'status'     => 0,
+                        'declined_at'=>Carbon::now('Asia/Manila')
+                ]);
+            return redirect()->back();
+        }
+        else
+        {
+            DB::table('borrows')
+                ->where('id',$request->record_id)
+                ->update([
+                            'status'     => 1,
+                            'accepted_at'=>Carbon::now('Asia/Manila')
+                        ]);
+            return redirect()->back();
+        }
+    }
 
     public function logout(Request $request){
         $request->session()->forget('student_id');
         Auth::logout();
         // Session::flush();
         return view('index');
-
     }
-
-
-    public function login(Request $request, Book $books, Student $students)
-    {
-        // $input = Input::only('email','password');   
-        // $email = $input['email'];
-        // $password = $input['password'];
-        // $validatedData = request()->validate([
-        //     'email' => 'required',
-        //     'password' => 'required',
-        //     ]);
-
-        // $check_row = Student::where('email', '=', Input::get('email'))->exists();
-
-        // if ($validatedData ) {
-        //     if ($check_row){
-        //         $query = DB::table('students')
-        //                     ->where('email', $email)
-        //                     ->where('password', $password)
-        //                     ->first();
-                            
-        //         // $db_password = $query->addSelect('password')->get();
-        //         if (!isset($query->password)) {
-        //             return 'invalid';
-        //         }
-        //         // dd($query->student_id);
-        //         $db_password = $query->password;
-        //         $db_role = $query->role;
-        //         $db_student_id = $query->student_id;
-        //         if ( $db_password == $password ) {
-        //             // dd('success');
-                                
-        //             $request->session()->has('student_id');
-
-        //             $request->session()->put('student_id',$db_student_id);
-
-        //             $session_id = $request->session()->get('student_id');
-
-        //             if ($db_role === 'admin') {
-        //                 // dd('admin');
-        //                 return redirect('/admin');
-        //                 // $books =  Book::all();
-        //                 // return view('/admin/index',compact('books'));
-        //             }else{
-                        
-        //                 return redirect('/student');
-        //                 // dd('student');
-        //                 // $books =  Book::all();
-        //                 // return view('/student/index',compact('books'));
-        //             }
-        //         }
-        //     }else{
-        //         return 'invalid email or password';
-        //     }
-        // }else{
-        //     return 'invalid';
-        // }
-
-        // dd(Auth::user());
-        // return Auth::users()->name;
-        // $books =  Book::all();
-        // return redirect('/admin');
-        // return view('admin.index',compact('books'));
-        // dd('test');
-    }   
-
-    
-    // public function student_view(){
-    //     $books =  Book::all();
-    //     return view('/student/index',compact('books'));
-    // }
-
-    // public function admin_view(){
-    //     $books =  Book::all();
-    //     return view('/admin/index',compact('books'));
-    // }
-            
-
 }

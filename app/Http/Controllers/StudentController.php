@@ -14,85 +14,71 @@ class StudentController extends Controller
 {
     public function index(Book $book, Request $request)
     {
-    //    dd( DB::table('borrows')
-    //    ->where('book_id',$books->id)
-    //    ->count());
-        // $book_count = Student::withCount('borrows')->get();
-        // dd($book_count);
-        // $books =  Book::all();
-        // return view('student.index',compact('books'))->with('book_count',$book_count);
-        // $borrow_id = Borrow::select('book_id')->get();
-        // dd($borrow_id);
         $borrows = Borrow::where('student_id',Auth::user()->student_id)->get()->pluck('book_id');
-        // dd($borrows);
-        $books = Book::withCount('borrows')->whereNotIn('id',$borrows)->get();
-        // dd($books);
+        $books = Book::select('id','title','author','quantity')
+                       ->withCount('borrows')
+                       ->whereNotIn('id',$borrows)
+                       ->orderBy('title','ASC')
+                       ->paginate(10);
         return view('student.index')->with('books',$books);
     }
 
     public function singleview(Book $book)
     {
-        $books = Book::withCount('borrows')->where('id',$book->id)->get();
+        $books = Book::select('id','title','author','description','quantity','image')
+                       ->withCount('borrows')
+                       ->where('id',$book->id)
+                       ->get();
         return view('/student/single-view')->with('books',$books);
-        // return view('/student/single-view')->with('book',$book);
     }
 
     public function borrow(Request $request)
     {
         // $student_id = $request->session()->get('student_id');
-        // dd($request->book_id);
         $student_id = Auth::user();
+
         DB::table('borrows')
             ->insert([
                 'student_id' => $student_id->student_id,
-                'book_id' => $request->book_id,
-                'status' => '2',
+                'book_id'    => $request->book_id,
+                'status'     => '2',
                 'created_at' => Carbon::now('Asia/Manila')
             ]);
 
         $books =  Book::get();
-        // return view('student.index',compact('books'));
         return redirect('/student')->withSuccess('Request Sent');
-        // return Borrow::all();
-
-
     }
 
-    public function record(Request $request){
-        
+    public function record(Request $request)
+    { 
         // $session_id = $request->session()->get('student_id');
-        // dd($session_id);
         $student_id = Auth::user()->student_id;
-        $borrow_book = DB::table('borrows')
-                            ->join('students', 'borrows.student_id','=','students.student_id')
-                            ->join('books', 'borrows.book_id','=', 'books.id')
-                            ->select('students.first_name', 'books.title', 'books.author',
-                                    'borrows.status','borrows.id','borrows.created_at','borrows.returned_at','borrows.book_id')
-                            ->orWhere('students.student_id',$student_id)
-                            ->get();
+        $borrow_book = Borrow::select('id','status','book_id','student_id','created_at','returned_at')
+                                ->with('book:id,title,author')
+                                ->where('student_id',$student_id)
+                                ->orderBy('status','DESC')
+                                ->paginate(10);
 
         return view('/student/record')->with('borrow_book',$borrow_book);
     }
 
-    public function book_returned(Request $request){
-        // dd($request->all());
-        // return $request->record_id;
+    public function book_returned(Request $request)
+    {
         DB::table('borrows')
         ->where('id',$request->record_id)
         ->update([
-                    'status' => 3,
-                    'returned_at'=>Carbon::now('Asia/Manila')
+                    'status'        => 3,
+                    'returned_at'   =>Carbon::now('Asia/Manila')
                 ]);
-                return redirect()->back()->withSuccess('Book Returned');
+        return redirect()->back()->withSuccess('Book Returned');
     }
 
     public function request_details(Book $book, Borrow $borrow)
     {
-        // dd($borrow);
-        // $query = DB::table('borrows')->select('name');
-        // dd($borrow->book_id);
-        $books = Book::where('id',$borrow->book_id)->withCount('borrows')->get();
-        // dd($books);
+        $books = Book::where('id',$borrow->book_id)
+                        ->withCount('borrows')
+                        ->with('borrows:book_id,created_at')
+                        ->get();
         return view('/student/request-details')->with('books',$books);
     }
 

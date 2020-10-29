@@ -3,16 +3,10 @@
 
 @section('Content')
 <h2>Request Details</h2>
-        {{-- <div class="modal-body"> --}}
-            @foreach ($books as $book)
                 <ul>
                     <li>
                         Student Name: 
-                        <span style="font-weight:900" id="student"> 
-                            {{-- {!!
-                                
-                            !!} --}}
-                        </span>
+                    <span class="text-success" style="font-weight:900" id="student">{{$student->name}}</span>
                     </li>
                     <li>
                         Book Title: <span style="font-weight:900" id="title">{{$book->title}}</span>
@@ -32,8 +26,6 @@
                         </span>
                     </li>
                 </ul>
-            @endforeach
-        {{-- </div> --}}
         <div>
             <a href="/admin/view-request"><button class="btn-primary"> Back </button></a>
         </div>
