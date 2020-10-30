@@ -43,7 +43,12 @@
                                     <div class="cols-sm-10">
                                         {{-- <div class="input-group"> --}}
                                             {{-- <span class="input-group-addon"><i class="fa fa-users fa" aria-hidden="true"></i></span> --}}
-                                            <input type="text" class="form-control" name="course" id="course" placeholder="Enter your Course" value="{{ old('course') }}" />
+                                            <select class="form-control" name="course">
+                                                @foreach($courses as $course_list)
+                                                  <option value="{{$course_list->course}}">{{$course_list->course}}</option>
+                                                @endforeach
+                                            </select>
+                                            {{-- <input type="text" class="form-control" name="course" id="course" placeholder="Enter your Course" value="{{ old('course') }}" /> --}}
                                         {{-- </div> --}}
                                             @if ($errors->has('course')) 
                                                 <span class="text-danger">{{ $errors->first('course') }}</span> 
@@ -113,14 +118,16 @@
                         email: true
                     },
                     course:{ 
-                        // required:true,
-                        accept: "[a-zA-Z]+"
+                        required:true,
+                        // accept: "[a-zA-Z]+"
                     },
                     password:{
-                        minlength:5
+                        minlength:5,
+                        required:true
                     },
                     confirm_password: {
-                        equalTo: "#password"
+                        equalTo: "#password",
+                        required:true
                     }
                 },
 
@@ -135,7 +142,7 @@
                     },
                     course: {
                         required: 'This field is required',
-                        accept: 'Letters only'
+                        // accept: 'Letters only'
                     },
                     password:{
                         required: 'This field is required'

@@ -3,7 +3,7 @@
 
 @section('Content')
 <div class="container col-4 text-white" style="padding-top: 50px">
-    <h2>Book Management</h2>
+    <h2 class="h1-reponsive white-text text-uppercase font-weight-bold">Book Management</h2>
     <br>
     <form class="form-horizontal" action="/login" method="post" name="form_login" id="form_login">
         @csrf

@@ -13,9 +13,7 @@ class UsersSeeder extends Seeder
      * @return void
      */
     public function run(Faker $faker)
-    {
-        
-        
+    {        
         foreach (range(1,50) as $index) {
             $user_id    = User::select('id')->orderBy('id','DESC')->first();
             $student = Student::create([

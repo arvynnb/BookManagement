@@ -75,7 +75,18 @@
 
         </style>
     </head>
-    <body>
+    <body >
+        <nav class="navbar navbar-expand-lg navbar-light  fixed-top">
+            {{-- <a class="navbar-brand" href="#">Navbar</a> --}}
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+              <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              </ul>
+                <a href="/logout">
+                    <button class="btn btn-outline-danger my-2 my-sm-0" type="button">Logout</button>
+                </a>
+            </div>
+          </nav>
+          
         <div class="d-flex" id="wrapper">
             <!-- Sidebar -->
             <div class="bg-black border border-left-0" id="sidebar-wrapper">
@@ -93,7 +104,7 @@
                     <br>
                     <a href="/student" class="list-group-item list-group-item-action bg-light">Book List</a>
                     <a href="/student/record" class="list-group-item list-group-item-action bg-light">Borrowed Book</a>
-                    <a href="/" class="list-group-item list-group-item-action bg-light">Logout</a>
+                    {{-- <a href="/logout" class="list-group-item list-group-item-action bg-light">Logout</a> --}}
                 </div>
             </div>
         </div>

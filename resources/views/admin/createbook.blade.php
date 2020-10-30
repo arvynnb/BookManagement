@@ -67,9 +67,6 @@
             <br>    
             <img alt="" name="output" id="output"   width="150" height="150" value="{{ old('output') }}" >
         </div>
-        {{-- @if ($errors->has('output'))
-            <span class="text-danger">{{$errors->first('image')}}</span>
-         @endif  --}}
          <div class="col-md-4">
              <button class="btn-primary" id="save" name="submit"> Save </button>
          </div>

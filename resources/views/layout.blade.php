@@ -19,7 +19,8 @@
                 font-weight: 200;
                 height: 100%;
                 margin: 0;
-                background-image:url("/storage/images/bg-image-login.jpg");
+                /* background-image:url("/storage/images/bg-image-login.jpg"); */
+                background:linear-gradient(0deg, rgba(0, 0, 0, 0), rgba(0, 27, 150, 0.3)), url("/storage/images/bg-image-login.jpg");
                 background-position: center;
                 background-repeat: no-repeat;
                 background-size: cover;

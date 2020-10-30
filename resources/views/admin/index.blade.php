@@ -2,7 +2,7 @@
 
 
 @section('Content')
-<a href="/admin/createbook">Create Book</a>
+{{-- <a href="/admin/createbook">Create Book</a> --}}
     <div class="form-row">
         <div class="col-md-6">
             <h2>Book List</h2><br>

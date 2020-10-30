@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use Auth;
+use App\Models\Course;
 use App\Models\student;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -11,7 +12,8 @@ class RegisterController extends Controller
 {
     public function index()
     {
-        return view('register');
+        $courses = Course::orderBy('course')->get();
+        return view('register')->with('courses',$courses);
     }
 
     public function register(Request $request)

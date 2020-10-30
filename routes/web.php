@@ -11,20 +11,21 @@
 */
 
 Route::get('/', function () {
+    Auth::logout(); 
+    // dd(Auth::user());
     return view('index');
 });
-
+//SEARCH
 Route::get('/admin/search', 'SearchController@filter_search');
+Route::get('/admin/student/search', 'SearchController@search_student');
 Route::get('/student/search', 'SearchController@filter_search');
-// Route::get('/student/search', 'SearchController@filter_search');
-
-Route::get('/','AdminController@logout')->middleware('logout');
 //REGISTER
 Route::get('register','RegisterController@index');
 Route::post('register','RegisterController@register');
-
-//AUTH
+//AUTH LOGIN
 Route::post('/login', 'AuthController@authlogin');
+//LOGOUT
+Route::get('/logout','AuthController@logout');
 
 //ADMIN
 Route::group(['middleware' => 'login'], function () {
@@ -43,6 +44,15 @@ Route::group(['middleware' => 'login'], function () {
     Route::get('/admin/view-request', 'AdminController@viewrequest');
     Route::get('/admin/{book}/view-request-student/{student}', 'AdminController@viewrequest_student');
     Route::post('/admin/view-request/status', 'AdminController@approve_decline');
+
+    Route::get('/admin/student-list','adminStudentListController@student_list');
+    Route::get('/admin/{student}/student-details','adminStudentListController@student_details');
+    Route::put('/admin/{student}/student-details','adminStudentListController@student_update');
+
+    Route::get('/admin/course','adminCourseController@course_list');
+    route::post('/admin/add-course','adminCourseController@add_course');
+    route::get('/admin/{course}/course-details','adminCourseController@course_details');
+    Route::put('/admin/{course}/course-details','adminCourseController@course_update');
 });
 
 //STUDENT

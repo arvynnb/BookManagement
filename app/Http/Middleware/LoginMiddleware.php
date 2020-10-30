@@ -16,9 +16,21 @@ class LoginMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (isset(Auth::user()->role) == 1) {
-            return $next($request);
+        if (!Auth::check()) {
+            return redirect('/');
+
+            if(Auth::user()->role != 1)
+            {
+                return redirect('/');
+            }
         }
-        return redirect('/');
+        else
+        {
+            if(Auth::user()->role == 1)
+            {
+                return $next($request);
+            }
+            return redirect('/');
+        }
     }
 }

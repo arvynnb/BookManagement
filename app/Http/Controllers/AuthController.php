@@ -19,13 +19,16 @@ class AuthController extends Controller
         $password =  $request->input('password');
         if($email && $password)
         {
+            
             if (Auth::attempt(['email' => $email, 'password' => $password, 'role' => 1]))
             {
+                // dd(Auth::user());
                 $books = Book::withCount('borrows')->get();
                 return redirect('/admin')->with('books',$books);
 
             }elseif(Auth::attempt(['email' => $email, 'password' => $password, 'role' => 0]))
             {
+                // dd(Auth::user());
                 $borrows = Borrow::select('book_id')->where('student_id',Auth::user()->student_id)->get()->pluck('book_id');
                 $books = Book::withCount('borrows')->whereNotIn('id',$borrows)->get();
                 return redirect('/student')->with('books',$books);
@@ -34,5 +37,11 @@ class AuthController extends Controller
         }
         return redirect()->back()->withErrors('Invalid Credentials');
 
+    }
+
+    public function logout(Request $request){
+        Auth::logout();
+        // dd(Auth::user());
+        return redirect('/');
     }
 }

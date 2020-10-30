@@ -183,11 +183,4 @@ class AdminController extends Controller
             return redirect()->back();
         }
     }
-
-    public function logout(Request $request){
-        $request->session()->forget('student_id');
-        Auth::logout();
-        // Session::flush();
-        return view('index');
-    }
 }
