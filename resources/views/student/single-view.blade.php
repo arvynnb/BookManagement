@@ -32,7 +32,7 @@
                 @csrf
                 <button class="btn-success"> Borrow </button>
             </form>
-            <a href="/student"><button class="btn-primary text-right"> Back </button></a>
+            <a href="/student"><button class="btn-primary text-right" style="padding-right: 22px"> Back </button></a>
         </div>
 
 <br>

@@ -17,4 +17,14 @@ class student extends Model
         return $this->hasMany('App\Models\student');
     }
 
+    public function user()
+    {
+        return $this->hasOne('App\Models\User');
+    }
+
+    public function course()
+    {
+        return $this->hasMany('App\Models\Course');
+    }
+
 }

@@ -3,7 +3,6 @@
 
 @section('Content')
 <h2>Book Details</h2>
-        {{-- <div class="modal-body"> --}}
             @foreach ($books as $book)
                 <ul>
                     <li>
@@ -16,16 +15,19 @@
                         Description: <span style="font-weight:900" id="description">{{$book->description}}</span>
                     </li>
                     <li>
-                        Quantity: <span style="font-weight:900" id="quantity">{{$book->quantity - $book->borrows_count }}</span>
+                        Quantity: <span style="font-weight:900" id="quantity">{{$book->quantity}}</span>
+                    </li>
+                    <li>
+                        Borrows: <span style="font-weight:900" id="quantity">{{$book->borrows_count }}</span>
                     </li>
                     <li>
                         Image Banner: <span style="font-weight:900" id="image" >
                             <img  src="{{ asset('/storage/images/'.$book->image)}}" alt="Book-Banner" style="width: 40%;">
+                            {{-- src="{{ asset('/storage/images/'.$book->image)}}" --}}
                         </span>
                     </li>
                 </ul>
             @endforeach
-        {{-- </div> --}}
         <div>
             <a href="/admin"><button class="btn-primary"> Back </button></a>
         </div>

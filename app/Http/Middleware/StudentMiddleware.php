@@ -16,11 +16,16 @@ class StudentMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if (!isset(Auth::user()->role) != 0) {
+        if (!Auth::check()) {
             return redirect('/');
-            // return $next($request);
-        }else{
-            return $next($request);
+        }
+        else
+        {
+            if(Auth::user()->role == 0)
+            {
+                return $next($request);
+            }
+            return redirect('/');
         }
     }
 }

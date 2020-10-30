@@ -17,6 +17,17 @@ class Book extends Model
     {
         return $this->belongsto('App\Models\student');
     }
+
+    public function file()
+    {
+        return $this->hasOne('App\Models\File','source_id','id');
+    }
+
+    // public function getModel($model)
+    // {
+    //     $model = 'Book';
+    //     return $this->where('model',$model)->hasOne('App\Models\File');
+    // }
 }
 
 
