@@ -54,8 +54,12 @@
         </div>
 
         <div class="form-group col-md-6">
-            <img id="output" alt="Book-Image"  width="200" height="200" src="{{ asset('/storage/images/'.$book->image)}}">
-            {{-- src="{{ asset('/storage/images/'.$book->image)}}"> --}}
+            @if ($book->image != '')
+                <img  src="{{ asset('/storage/images/'.$book->image)}}"  alt="Book-Banner" style="width: 40%;">
+            @else
+                <img src="{{ asset('/storage/images/default-placeholder-image.png')}}" id="output" alt="Book-Banner" style="width: 40%;">
+            @endif
+
             @if ($errors->has('image')) 
                 <span class="text-danger">{{ $errors->first('image') }}</span> 
             @endif 

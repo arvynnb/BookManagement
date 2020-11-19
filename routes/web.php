@@ -37,7 +37,6 @@ Route::group(['middleware' => 'login'], function () {
 
     Route::get('/admin/{book}/edit', 'AdminController@edit');
     Route::put('/admin/{book}/edit', 'AdminController@update');
-
     Route::delete('/admin/{book}/delete','AdminController@delete');
 
     Route::get('/admin/{book}/view-book', 'AdminController@viewbook');
@@ -53,6 +52,10 @@ Route::group(['middleware' => 'login'], function () {
     route::post('/admin/add-course','adminCourseController@add_course');
     route::get('/admin/{course}/course-details','adminCourseController@course_details');
     Route::put('/admin/{course}/course-details','adminCourseController@course_update');
+    Route::delete('/admin/course/{course}/delete','adminCourseController@course_delete');
+    
+    Route::get('/admin/export','ExportController@books_export');
+    Route::get('/admin/student-list/export','ExportController@students_export');
 });
 
 //STUDENT

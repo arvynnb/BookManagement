@@ -2,7 +2,7 @@
 
 
 @section('Content')
-<a href="/admin">Back</a>
+<a href="/admin/course">Back</a>
 <h2>Course Details</h2><br>
 
     @foreach ($courses as $course)

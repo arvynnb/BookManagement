@@ -6,6 +6,7 @@
     <div class="form-row">
         <div class="col-md-6">
             <h2>Book List</h2><br>
+            <a href="/admin/export">Export</a>
         </div>
         {{-- <div class="col-md-6">
             <form action="/admin/search" method="get" class="form-inline d-flex justify-content-center md-form form-sm">
@@ -15,6 +16,12 @@
             </form>
         </div> --}}
     </div>
+
+    @if(session('success'))
+    <div class="alert alert-success">
+            {{session('success')}}
+    </div>
+    @endif 
 
         {{-- <div class="row"> --}}
         {{-- <table class="table table-striped text-center" id="book_list"> --}}
@@ -83,12 +90,6 @@
     {{-- </div> --}}
 
 
-    @if(session('success'))
-    <div class="alert alert-success">
-            {{session('success')}}
-    </div>
-    @endif 
-
     @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -105,9 +106,9 @@
     <script>
         function delete_book(id)
         {
-            console.log(id);
+            console.log($("#delete").modal());
             $("#delete-form").attr('action',`admin/${id}/delete`);
-            $("#delete").modal();
+           
         }
 
         $(document).ready(function() {

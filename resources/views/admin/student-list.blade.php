@@ -5,6 +5,7 @@
     <div class="form-row">
         <div class="col-md-6">
             <h2>Student List</h2><br>
+            <a href="/admin/student-list/export">Export</a>
         </div>
         {{-- <div class="col-md-6">
             <form action="/admin/student-details/search" method="get" class="form-inline d-flex justify-content-center md-form form-sm">
