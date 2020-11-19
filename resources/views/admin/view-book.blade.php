@@ -22,8 +22,11 @@
                     </li>
                     <li>
                         Image Banner: <span style="font-weight:900" id="image" >
-                            <img  src="{{ asset('/storage/images/'.$book->image)}}" alt="Book-Banner" style="width: 40%;">
-                            {{-- src="{{ asset('/storage/images/'.$book->image)}}" --}}
+                            @if ($book->image != '')
+                                <img  src="{{ asset('/storage/images/'.$book->image)}}" alt="Book-Banner" style="width: 40%;">
+                            @else 
+                                <img src="{{ asset('/storage/images/default-placeholder-image.png')}}" alt="Book-Banner" style="width: 40%;">
+                            @endif
                         </span>
                     </li>
                 </ul>

@@ -14,11 +14,17 @@ class UsersSeeder extends Seeder
      */
     public function run(Faker $faker)
     {        
+        // $courses = [
+        //             ['course' => 'BSCS',], 
+        //             ['course' => 'BSIT',],
+        //             ['course' => 'BSE',], 
+        //             ['course' => 'CBA']
+        //         ];
         foreach (range(1,50) as $index) {
             $user_id    = User::select('id')->orderBy('id','DESC')->first();
             $student = Student::create([
                             'name'    => $faker->name,
-                            'course'  => "CS",
+                            'course'  => $faker->randomElement(['BSCS', 'BSIT','BSE','CBA']),
                             'user_id' =>$user_id->id+1
                             ]);
 

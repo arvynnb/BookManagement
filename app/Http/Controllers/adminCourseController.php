@@ -57,7 +57,13 @@ class adminCourseController extends Controller
         
         $course->update(['course'   => $validatedData['course']]);
 
-        return redirect()->back()->withSuccess('Course Updated');
+        return view('/admin/course-list')->withSuccess('Course Updated');
 
+    }
+
+    public function course_delete(Course $course)
+    {
+        $course->delete();
+        return redirect()->back()->withSuccess('Course Deleted');
     }
 }
